@@ -1,3 +1,10 @@
+.DS_Store
+.rogo
+*.swo
+*.swp
+BuildLocal.rogue
+/Build
+
 # Prerequisites
 *.d
 
