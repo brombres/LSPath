@@ -4,8 +4,8 @@
 #===============================================================================
 $requireRogue "1.9.3"
 
-$define VERSION "1.7"
-$define DATE    "October 2, 2021 by Abe Pralle"
+$define VERSION "2.0"
+$define DATE    "September 7, 2022"
 
 uses Console/CommandLineParser
 
