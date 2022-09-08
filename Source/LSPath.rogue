@@ -2,7 +2,7 @@
 # LSPath.rogue
 # October 2, 2020 by Abe Pralle
 #===============================================================================
-$requireRogue "1.9.3"
+$requireRogue "2.0"
 
 $define VERSION "2.0"
 $define DATE    "September 7, 2022"
