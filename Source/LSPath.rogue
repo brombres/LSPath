@@ -7,13 +7,13 @@ $requireRogue "1.9.3"
 $define VERSION "1.7"
 $define DATE    "October 2, 2021 by Abe Pralle"
 
-uses Utility/CommandLineParser
+uses Console/CommandLineParser
 
 LSPath( System.command_line_arguments )
 
 class LSPath
   PROPERTIES
-    filepaths   = StringTable<<String>>()
+    filepaths   = [String:String]
     show_hidden = false
     grep        : String[]
     names       : String[]
@@ -39,7 +39,7 @@ class LSPath
 
       show_hidden = command//options//hidden->Logical
 
-      if (not command//args) command.ensure_list( "args" ).add( "**" )
+      if (not command//args) command//args = @[ "**" ]
 
       grep = command//options//grep.to_list<<String>>
       names = command//options//name.to_list<<String>>
@@ -49,11 +49,11 @@ class LSPath
       endForEach
 
       forEach (arg in command//args.to_list<<String>>)
-        if (File.is_folder(arg)) arg = File.ensure_ends_with_separator( arg ) + "**"
-        if (File.exists(arg))
+        if (File(arg).is_folder) arg = File(arg)/"**"
+        if (File(arg).exists)
           add( arg )
         else
-          forEach (filepath in File.listing(arg,&ignore_hidden=not show_hidden))
+          forEach (filepath in File(arg).listing(&ignore_hidden=not show_hidden))
             add( filepath )
           endForEach
         endIf
@@ -62,7 +62,7 @@ class LSPath
       block filepaths = filepaths.values.to_list
 
         if (command//options//esc)
-          filepaths .= map<<String>>( (f) => File.esc(f) )
+          filepaths = filepaths.map<<String>>( (f) => File(f).esc )
         endIf
 
         if (command//options//command)
@@ -85,15 +85,15 @@ class LSPath
       endBlock
 
     method add( filepath:String )
-      if (not show_hidden and File.filename(filepath).begins_with('.')) return
+      if (not show_hidden and File(filepath).filename.begins_with('.')) return
       contingent
         necessary (names.count)
-        sufficient (File.matches_wildcard_pattern(filepath,forEach in names,&ignore_case))
+        sufficient (FilePattern(forEach in names).matches(filepath,&ignore_case))
         return  # No matching name pattern
       endContingent
-      filepath = File.absolute_filepath( filepath )
+      filepath = File( filepath ).abs
       if (grep.count)
-        if (File.is_folder(filepath)) return
+        if (File(filepath).is_folder) return
         contingent
           local remaining_grep = grep.cloned
           forEach (line in LineReader(File(filepath)))
