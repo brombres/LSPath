@@ -7,7 +7,12 @@ class LSPathPackage : Package
   METHODS
     method install
       try
-        prior.install
+        download
+        unpack
+        build
+        System.sleep(5)
+        install_executable( "**/exe-filename" )
+        #prior.install
       catch (err:Error)
         if (not err->String.contains("Unable to open") or not System.is_windows) throw err
           #{
