@@ -12,7 +12,7 @@ class LSPathPackage : Package
       try
         build
         System.sleep(5)
-        install_executable( "**/exe-filename" )
+        install_executable( "**/lspath.exe" )
         #prior.install
       catch (err:Error)
         if (not System.is_windows) throw err
@@ -34,7 +34,7 @@ class LSPathPackage : Package
         println "Authorize and hit ENTER."
         Console.input
         build
-        install_executable( "**/exe-filename" )
+        install_executable( "**/lspath.exe" )
       endTry
 endClass
 #~\AppData\Local\Morlock\build\abepralle\lspath\AbePralle-LSPath-{hash}\Build
