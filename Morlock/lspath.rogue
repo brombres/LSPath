@@ -1,0 +1,33 @@
+class LSPathPackage : Package
+  # Base class Package is defined here:
+  # https://github.com/AbePralle/Morlock/blob/main/Source/Package.rogue
+  PROPERTIES
+    name = "abepralle/lspath"
+
+  METHODS
+    method install
+      try
+        prior.install
+      catch (err:Error)
+        if (not err->String.contains("Unable to open") or not System.is_windows) throw err
+          #{
+          println ...
+           @|┌──────────────────────────────────────────────────────────────────────────────┐
+            |│                                  IMPORTANT                                   │
+            |├──────────────────────────────────────────────────────────────────────────────┤
+            |│Windows Defender currently misidentifies lspath.exe as containing the virus   │
+            |│'Trojan:Win32/Sabsik.FL.B!ml' (note 'ml' indicates a machine learning or fuzzy│
+            |│match heuristic).                                                             │
+            |│                                                                              │
+            |│For 'lspath' to work you must click on the alert message and select "Allow on │
+            |│device" for executable ~/AppData/Local/Morlock/packages/                                                                      │
+            |│                                                                              │
+            |│Coders .                                                                      │
+            |└──────────────────────────────────────────────────────────────────────────────┘
+          }#
+          println "Authorize and hit ENTER."
+          prior.install
+      endTry
+endClass
+#~\AppData\Local\Morlock\build\abepralle\lspath\AbePralle-LSPath-{hash}\Build
+#C:\Users\Abe Pralle\AppData\Local\Morlock\packages\abepralle\lspath\2.0.1\bin
