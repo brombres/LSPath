@@ -15,7 +15,7 @@ class LSPathPackage : Package
 
       try
         build
-        install_executable( "**/lspath.exe" )
+        install_executable
 
         if (System.is_windows)
           local mesg = ...
@@ -46,7 +46,7 @@ class LSPathPackage : Package
 
         Console.input( "Whitelist lspath.exe and then press [ENTER]." )
         build
-        install_executable( "**/lspath.exe" )
+        install_executable
       endTry
 
     method print_message_box( title:String, message:String )
