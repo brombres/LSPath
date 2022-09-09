@@ -6,32 +6,35 @@ class LSPathPackage : Package
 
   METHODS
     method install
+      download
+      unpack
+
       try
-        download
-        unpack
         build
         System.sleep(5)
         install_executable( "**/exe-filename" )
         #prior.install
       catch (err:Error)
-        if (not err->String.contains("Unable to open") or not System.is_windows) throw err
-          #{
-          println ...
-           @|┌──────────────────────────────────────────────────────────────────────────────┐
-            |│                                  IMPORTANT                                   │
-            |├──────────────────────────────────────────────────────────────────────────────┤
-            |│Windows Defender currently misidentifies lspath.exe as containing the virus   │
-            |│'Trojan:Win32/Sabsik.FL.B!ml' (note 'ml' indicates a machine learning or fuzzy│
-            |│match heuristic).                                                             │
-            |│                                                                              │
-            |│For 'lspath' to work you must click on the alert message and select "Allow on │
-            |│device" for executable ~/AppData/Local/Morlock/packages/                                                                      │
-            |│                                                                              │
-            |│Coders .                                                                      │
-            |└──────────────────────────────────────────────────────────────────────────────┘
-          }#
-          println "Authorize and hit ENTER."
-          prior.install
+        if (not System.is_windows) throw err
+        #{
+        println ...
+         @|┌──────────────────────────────────────────────────────────────────────────────┐
+          |│                                  IMPORTANT                                   │
+          |├──────────────────────────────────────────────────────────────────────────────┤
+          |│Windows Defender currently misidentifies lspath.exe as containing the virus   │
+          |│'Trojan:Win32/Sabsik.FL.B!ml' (note 'ml' indicates a machine learning or fuzzy│
+          |│match heuristic).                                                             │
+          |│                                                                              │
+          |│For 'lspath' to work you must click on the alert message and select "Allow on │
+          |│device" for executable ~/AppData/Local/Morlock/packages/                                                                      │
+          |│                                                                              │
+          |│Coders .                                                                      │
+          |└──────────────────────────────────────────────────────────────────────────────┘
+        }#
+        println "Authorize and hit ENTER."
+        Console.input
+        build
+        install_executable( "**/exe-filename" )
       endTry
 endClass
 #~\AppData\Local\Morlock\build\abepralle\lspath\AbePralle-LSPath-{hash}\Build
