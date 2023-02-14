@@ -10,7 +10,7 @@ Platforms | Windows, macOS, Linux
 # Installation
 
 1. Install [Morlock](https://morlock.sh).
-2. `morlock install abepralle/lspath`
+2. `morlock install brombres/lspath`
 
 # Usage
 

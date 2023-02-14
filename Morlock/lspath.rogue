@@ -1,12 +1,12 @@
 class LSPathPackage : Package
   # Base class Package is defined here:
-  # https://github.com/AbePralle/Morlock/blob/main/Source/Package.rogue
+  # https://github.com/brombres/Morlock/blob/main/Source/Package.rogue
   PROPERTIES
-    name = "abepralle/lspath"
+    name = "brombres/lspath"
 
   METHODS
     method init
-      dependency( "abepralle/rogue@2.0.8" )
+      dependency( "brombres/rogue@2.0.8" )
       scan_repo_releases
 
     method install
