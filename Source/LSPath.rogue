@@ -96,6 +96,9 @@ class LSPath
 
     method add( filepath:String )
       if (not show_hidden and File(filepath).filename.begins_with('.')) return
+      if (only_files and File(filepath).is_folder) return
+      if (only_folders and not File(filepath).is_folder) return
+
       contingent
         necessary (names.count)
         if (only_files)
@@ -159,12 +162,14 @@ class LSPath
                |    a filepath containing "abc 123" would display as "abc\ 123".
                |
                |  --files
-               |    When searching for matching --name patterns, only the filename is checked,
-               |    not the folder path.
+               |    Only files are included in the results - folders are omitted. When searching
+               |    for matching --name patterns, only the filename is checked, not the folder
+               |    path.
                |
                |  --folders
-               |    When searching for matching --name patterns, only the folder path is
-               |    checked, not the filename.
+               |    Only folders are included in the results - files are omitted. When searching
+               |    for matching --name patterns, only the folder path is checked, not the
+               |    filename.
                |
                |  --grep=<pattern>, -g <pattern>
                |    Only prints filepaths of files that contain one or more given patterns.
