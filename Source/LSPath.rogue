@@ -13,10 +13,12 @@ LSPath( System.command_line_arguments )
 
 class LSPath
   PROPERTIES
-    filepaths   = [String:String]
-    show_hidden = false
-    grep        : String[]
-    names       : String[]
+    filepaths    = [String:String]
+    show_hidden  = false
+    only_folders = false
+    only_files   = false
+    grep         : String[]
+    names        : String[]
 
   METHODS
     method init( args:String[] )
@@ -24,6 +26,8 @@ class LSPath
       [
         option( "--command=", &alias="-c" )
         option( "--esc",      &alias="-e" )
+        option( "--files" )
+        option( "--folders" )
         option( "--grep=",    &alias="-g", &multi )
         option( "--help",     &aliases=["-h","-?"] )
         option( "--hidden",   &alias="-a" )
@@ -37,7 +41,13 @@ class LSPath
         System.exit
       endIf
 
-      show_hidden = command//options//hidden->Logical
+      show_hidden  = command//options//hidden->Logical
+      only_folders = command//options//folders->Logical
+      only_files   = command//options//files->Logical
+      if (only_files and only_folders)
+        only_files = false
+        only_folders = false
+      endIf
 
       if (not command//args) command//args = @[ "**" ]
 
@@ -88,7 +98,15 @@ class LSPath
       if (not show_hidden and File(filepath).filename.begins_with('.')) return
       contingent
         necessary (names.count)
-        sufficient (FilePattern(forEach in names).matches(filepath,&ignore_case))
+        if (only_files)
+          local filename = File( filepath ).filename
+          sufficient (FilePattern(forEach in names).matches(filename,&ignore_case))
+        elseIf (only_folders)
+          local folder = File( filepath ).folder
+          sufficient (FilePattern(forEach in names).matches(folder,&ignore_case))
+        else
+          sufficient (FilePattern(forEach in names).matches(filepath,&ignore_case))
+        endIf
         return  # No matching name pattern
       endContingent
       filepath = File( filepath ).abs
@@ -139,6 +157,14 @@ class LSPath
                |  --esc, -e
                |    Paths are displayed with spaces and most other symbols escaped. For example
                |    a filepath containing "abc 123" would display as "abc\ 123".
+               |
+               |  --files
+               |    When searching for matching --name patterns, only the filename is checked,
+               |    not the folder path.
+               |
+               |  --folders
+               |    When searching for matching --name patterns, only the folder path is
+               |    checked, not the filename.
                |
                |  --grep=<pattern>, -g <pattern>
                |    Only prints filepaths of files that contain one or more given patterns.

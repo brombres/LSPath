@@ -38,7 +38,7 @@ Example (macOS/Linux)                       | Description
 Paths are displayed with spaces and most other symbols escaped. For example
 a filepath containing `abc 123` would display as `abc\ 123`.
 
-`--grep=<pattern>` `-g <pattern>`
+### `--grep=<pattern>` `-g <pattern>`
 Only prints filepaths of files that contain one or more given patterns.
 Despite the name these are "wildcard" patterns, not classic "grep" regular
 expressions. Patterns are applied line by line and are not case sensitive.
@@ -50,19 +50,25 @@ prints filepaths of all files containing a line that starts with `a` and
 ends with `z`. Specifying multiple grep patterns requires that a file contain
 all patterns in order to have its filepath printed.
 
-`--help` `-h` `-?`
+### `--files`
+When searching for matching `--name` patterns, only the filename is checked, not the folder path.
+
+### `--folders`
+When searching for matching `--name` patterns, only the folder path is checked, not the filename.
+
+### `--help` `-h` `-?`
 Print this help text.
 
-`--hidden` `-a`
+### `--hidden` `-a`
 Show all hidden files - hidden files are omitted by default.
 
-`--name=<name>` `-n <name>`
+### `--name=<name>` `-n <name>`
 Only print filepaths containing the given name pattern. Name comparisions
 are case-insensitive. If multiple `--name` directives are given, each
 filepath need only match one of the names to be printed. Wildcard names
 patterns may be used, e.g. `"ABC*.cpp"`.
 
-`--quiet, -q`
+### `--quiet, -q`
 Prevents the `--command` option from displaying each command before executing it.
 Does not suppress the execution output. Useful when piping the result of `lspath`
 into another command.
