@@ -59,7 +59,7 @@ class LSPath
       endForEach
 
       forEach (arg in command//args.to_list<<String>>)
-        if (File(arg).is_folder) arg = File(arg)/"**"
+        if (File(arg).is_folder) arg = File(arg)/"*"
         if (File(arg).exists)
           add( arg )
         else
