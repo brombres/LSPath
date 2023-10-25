@@ -24,15 +24,16 @@ class LSPath
     method init( args:String[] )
       local command = CommandLineParser().
       [
-        option( "--command=", &alias="-c" )
-        option( "--esc",      &alias="-e" )
+        option( "--command=",  &alias="-c" )
+        option( "--esc",       &alias="-e" )
         option( "--files" )
         option( "--folders" )
-        option( "--grep=",    &alias="-g", &multi )
-        option( "--help",     &aliases=["-h","-?"] )
-        option( "--hidden",   &alias="-a" )
-        option( "--name=",    &alias="-n", &multi )
-        option( "--quiet",    &alias="-q" )
+        option( "--grep=",     &alias="-g", &multi )
+        option( "--help",      &aliases=["-h","-?"] )
+        option( "--hidden",    &alias="-a" )
+        option( "--name=",     &alias="-n", &multi )
+        option( "--quiet",     &alias="-q" )
+        option( "--recursive", &alias="-r" )
         on_unknown( this=>print_usage )
       ].parse( args )
 
@@ -59,7 +60,10 @@ class LSPath
       endForEach
 
       forEach (arg in command//args.to_list<<String>>)
-        if (File(arg).is_folder) arg = File(arg)/"*"
+        if (File(arg).is_folder)
+          if (command//options//recursive) arg = File(arg)/"**"
+          else                             arg = File(arg)/"*"
+        endIf
         if (File(arg).exists)
           add( arg )
         else
@@ -197,6 +201,9 @@ class LSPath
                |    Prevents the `--command` option from displaying each command before executing it.
                |    Does not suppress the execution output. Useful when piping the result of `lspath`
                |    into another command.
+               |
+               |  --recursive, -r
+               |    All specified folders are processed recursively.
                |
                |WILDCARD PATTERNS
                |  Put patterns in quotes to ensure that LSTree's non-standard wildcard patterns
