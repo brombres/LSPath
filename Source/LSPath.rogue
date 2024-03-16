@@ -33,7 +33,7 @@ class LSPath
         option( "--hidden",    &alias="-a" )
         option( "--name=",     &alias="-n", &multi )
         option( "--quiet",     &alias="-q" )
-        option( "--recursive", &alias="-r" )
+        option( "--limit",     &alias="-l" )
         on_unknown( this=>print_usage )
       ].parse( args )
 
@@ -61,8 +61,8 @@ class LSPath
 
       forEach (arg in command//args.to_list<<String>>)
         if (File(arg).is_folder)
-          if (command//options//recursive) arg = File(arg)/"**"
-          else                             arg = File(arg)/"*"
+          if (command//options//limit) arg = File(arg)/"*"
+          else                         arg = File(arg)/"**"
         endIf
         if (File(arg).exists)
           add( arg )
@@ -202,8 +202,8 @@ class LSPath
                |    Does not suppress the execution output. Useful when piping the result of `lspath`
                |    into another command.
                |
-               |  --recursive, -r
-               |    All specified folders are processed recursively.
+               |  --limit, -l
+               |    Limit lspath to operate non-recursively.
                |
                |WILDCARD PATTERNS
                |  Put patterns in quotes to ensure that LSTree's non-standard wildcard patterns

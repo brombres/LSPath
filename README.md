@@ -73,8 +73,8 @@ Prevents the `--command` option from displaying each command before executing it
 Does not suppress the execution output. Useful when piping the result of `lspath`
 into another command.
 
-### `--recursive, -r`
-All specified folders are processed recursively.
+### `--limit, -l`
+Limit `lspath` to operate non-recursively.
 
 ## Wildcard Patterns
 Put patterns in quotes to ensure that LSTree's non-standard wildcard patterns
