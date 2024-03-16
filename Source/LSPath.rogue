@@ -25,8 +25,9 @@ class LSPath
       local command = CommandLineParser().
       [
         option( "--command=",  &alias="-c" )
+        option( "--dirs",      &alias="-d" )
         option( "--esc",       &alias="-e" )
-        option( "--files" )
+        option( "--files",     &alias="-f" )
         option( "--folders" )
         option( "--grep=",     &alias="-g", &multi )
         option( "--help",      &aliases=["-h","-?"] )
@@ -43,7 +44,7 @@ class LSPath
       endIf
 
       show_hidden  = command//options//hidden->Logical
-      only_folders = command//options//folders->Logical
+      only_folders = command//options//folders->Logical or command//options//dirs->Logical
       only_files   = command//options//files->Logical
       if (only_files and only_folders)
         only_files = false
@@ -109,7 +110,7 @@ class LSPath
           local filename = File( filepath ).filename
           sufficient (FilePattern(forEach in names).matches(filename,&ignore_case))
         elseIf (only_folders)
-          local folder = File( filepath ).folder
+          local folder = File( filepath ).filename
           sufficient (FilePattern(forEach in names).matches(folder,&ignore_case))
         else
           sufficient (FilePattern(forEach in names).matches(filepath,&ignore_case))
@@ -165,15 +166,15 @@ class LSPath
                |    Paths are displayed with spaces and most other symbols escaped. For example
                |    a filepath containing "abc 123" would display as "abc\ 123".
                |
-               |  --files
+               |  --files, -f
                |    Only files are included in the results - folders are omitted. When searching
                |    for matching --name patterns, only the filename is checked, not the folder
                |    path.
                |
-               |  --folders
+               |  --folders, --dirs, -d
                |    Only folders are included in the results - files are omitted. When searching
-               |    for matching --name patterns, only the folder path is checked, not the
-               |    filename.
+               |    for matching --name patterns, only folders with a filename (but not path)
+               |    matching the specified pattern are checked.
                |
                |  --grep=<pattern>, -g <pattern>
                |    Only prints filepaths of files that contain one or more given patterns.

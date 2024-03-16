@@ -53,8 +53,8 @@ all patterns in order to have its filepath printed.
 ### `--files`
 When searching for matching `--name` patterns, only the filename is checked, not the folder path.
 
-### `--folders`
-When searching for matching `--name` patterns, only the folder path is checked, not the filename.
+### `--folders`, `--dirs`, `-d`
+Only folders are included in the results - files are omitted. When searching for matching `--name` patterns, only folders with a filename (but not path) matching the specified pattern are checked.
 
 ### `--help` `-h` `-?`
 Print this help text.
