@@ -6,6 +6,6 @@ class LSPathPackage : Package
 
   METHODS
     method init
-      dependency( "brombres/rogue@2.31" )
+      dependency( "brombres/rogue@2.34.2" )
       scan_repo_releases
 endClass
