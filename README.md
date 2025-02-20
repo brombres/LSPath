@@ -77,8 +77,8 @@ into another command.
 Limit `lspath` to operate non-recursively.
 
 ## Wildcard Patterns
-Put patterns in quotes to ensure that LSTree's non-standard wildcard patterns
-are correctly processed. By example:
+Put patterns in quotes to ensure that LSPath's nonstandard wildcard pattern
+'**' is processed correctly. By example:
 
 Pattern         | Description
 ----------------|-------------------------------------------
