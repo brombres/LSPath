@@ -3,8 +3,8 @@ Lists full filepaths matching a search pattern with optional command execution o
 
 About     | Current Release
 ----------|-----------------------
-Version   | 2.6
-Date      | March 19, 2025
+Version   | 2.7
+Date      | May 5, 2025
 Platforms | Windows, macOS, Linux
 
 # Installation
