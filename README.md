@@ -62,7 +62,7 @@ Print this help text.
 ### `--hidden` `-a`
 Show all hidden files - hidden files are omitted by default.
 
-### `--name=<name>` `-n <name>`
+### `--name=<filename>` `-n <filename>`
 Only print filepaths containing the given name pattern. Name comparisions
 are case-insensitive. If multiple `--name` directives are given, each
 filepath need only match one of the names to be printed. Wildcard names
@@ -75,6 +75,12 @@ into another command.
 
 ### `--limit, -l`
 Limit `lspath` to operate non-recursively.
+
+### `--exclude=<filename>` `-x <filename>`
+Exclude filenames matching the given pattern. `--exclude` overrides any matches
+made with `--name`. For example, `lspath -n .png -x .import` will include
+`XYZ.png` but will exclude `XYZ.png.import`. Multiple `--exclude` directives
+can be specified.
 
 ## Wildcard Patterns
 Put patterns in quotes to ensure that LSPath's nonstandard wildcard pattern

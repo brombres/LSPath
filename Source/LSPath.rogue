@@ -20,6 +20,7 @@ class LSPath
     limited      = false
     grep         : String[]
     names        : String[]
+    exclude      : String[]
 
   METHODS
     method init( args:String[] )
@@ -36,6 +37,7 @@ class LSPath
         option( "--name=",     &alias="-n", &multi )
         option( "--quiet",     &alias="-q" )
         option( "--limit",     &alias="-l" )
+        option( "--exclude=",  &alias="-x", &multi )
         on_unknown( this=>print_usage )
       ].parse( args )
 
@@ -61,8 +63,13 @@ class LSPath
 
       grep = command//options//grep.to_list<<String>>
       names = command//options//name.to_list<<String>>
+      exclude = command//options//exclude.to_list<<String>>
 
       forEach (name in writer=names.rewriter)
+        writer.write( "**$**" (name) )
+      endForEach
+
+      forEach (name in writer=exclude.rewriter)
         writer.write( "**$**" (name) )
       endForEach
 
@@ -109,6 +116,8 @@ class LSPath
       if (not show_hidden and File(filepath).filename.begins_with('.')) return
       if (only_files and File(filepath).is_folder) return
       if (only_folders and not File(filepath).is_folder) return
+
+      if (FilePattern(forEach in exclude).matches(filepath,&ignore_case)) return
 
       contingent
         necessary (names.count)
@@ -198,19 +207,25 @@ class LSPath
                |  --hidden, -a
                |    Show all hidden files.
                |
-               |  --name=<name>, -n <name>
+               |  --name=<filename>, -n <filename>
                |    Only print filepaths containing the given name pattern. Name comparisions
                |    are case-insensitive. If multiple "--name" directives are given, each
                |    filepath need only match one of the names to be printed. Wildcard names
                |    patterns may be used, e.g. "ABC*.cpp".
                |
                |  --quiet, -q
-               |    Prevents the `--command` option from displaying each command before executing it.
-               |    Does not suppress the execution output. Useful when piping the result of `lspath`
+               |    Prevents the '--command' option from displaying each command before executing it.
+               |    Does not suppress the execution output. Useful when piping the result of 'lspath'
                |    into another command.
                |
                |  --limit, -l
                |    Limit lspath to operate non-recursively.
+               |
+               |  --exclude=<filename>, -x <filename>
+               |    Exclude filenames matching the given pattern. '--exclude' overrides any matches
+               |    made with '--name'. For example, 'lspath -n .png -x .import' will include
+               |    'XYZ.png' but will exclude 'XYZ.png.import'. Multiple '--exclude' directives
+               |    can be specified.
                |
                |WILDCARD PATTERNS
                |  Put patterns in quotes to ensure that LSPath's nonstandard wildcard pattern
