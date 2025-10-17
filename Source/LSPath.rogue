@@ -89,20 +89,25 @@ class LSPath
 
       block filepaths = filepaths.values.to_list
 
-        if (command//options//esc)
-          filepaths = filepaths.map<<String>>( (f) => File(f).esc )
-        endIf
+        local esc = command//options//esc->Logical
 
         if (command//options//command)
           local quiet = command//options.contains( "quiet" )
           local command_line = command//options//command->String
           if (command_line.contains("$$"))
+            if (esc) filepaths = filepaths.map<<String>>( (f) => File(f).esc )
+
             local cmd = command_line.replacing("$$",filepaths.join(' '))
             if (not quiet) println "> " + cmd
             System.run( cmd )
           else
             forEach (filepath in filepaths)
-              local cmd = command_line.replacing("$",filepath)
+              local cmd = command_line
+              cmd = replace( cmd, "$(filename)", File(filepath).filename, &=esc )
+              cmd = replace( cmd, "$(folder)", File(filepath).folder, &=esc )
+              cmd = replace( cmd, "$(name)", File(filepath).without_extension.filename, &=esc )
+              cmd = replace( cmd, "$(ext)", File(filepath).extension, &=esc )
+              cmd = replace( cmd, "$", filepath, &=esc )
               if (not quiet) println "> " + cmd
               System.run( cmd )
             endForEach
@@ -111,6 +116,10 @@ class LSPath
           println( forEach in filepaths )
         endIf
       endBlock
+
+    method replace( cmd:String, placeholder:String, filepath:String, &esc )->String
+      if (esc) filepath = File( filepath ).esc
+      return cmd.replacing( placeholder, filepath )
 
     method add( filepath:String )
       if (not show_hidden and File(filepath).filename.begins_with('.')) return
@@ -164,7 +173,13 @@ class LSPath
                |    can contain one of two kinds of placeholder marker:
                |
                |    $  - Command is invoked N times for N result filepaths, with a different
-               |         filepath substituted each time.
+               |         filepath substituted each time. The following variations of '$'
+               |         are supported:
+               |           $           - Full filepath (folder + filename)
+               |           $(folder)   - Folder only
+               |           $(filename) - Filename only (without folder)
+               |           $(name)     - Base filename only (without folder or extension)
+               |           $(ext)      - Filename extension only (e.g. "txt")
                |    $$ - Command is invoked once and $$ is replaced by a space-separated list
                |         of every filepath.
                |

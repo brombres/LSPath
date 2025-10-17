@@ -27,6 +27,16 @@ Placeholder Marker | Description
 `$`                | Command is invoked N times for N result filepaths, with a different filepath substituted each time.
 `$$`               | Command is invoked once and `$$` is replaced by a space-separated list of every filepath.
 
+In addition, the following variants of `$` are supported:
+
+Placeholder Marker | Description
+-------------------|--------------------------------------------------------------
+`$`                | Replaced by full filepath (folder + filename)
+`$(folder)`        | Replaced by folder only
+`$(filename)`      | Replaced by filename only (without folder)
+`$(name)`          | Base filename only (without folder or extension)
+`$(ext)`           | Replaced by filename extension only (e.g. "txt")
+
 Single quotes must be used around the command to prevent `$` being escaped by the shell. See also: --quiet
 
 Example (macOS/Linux)                       | Description
