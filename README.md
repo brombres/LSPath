@@ -36,6 +36,7 @@ Placeholder Marker | Description
 `$(filename)`      | Replaced by filename only (without folder)
 `$(name)`          | Base filename only (without folder or extension)
 `$(ext)`           | Replaced by filename extension only (e.g. "txt")
+`$(0N)`            | Replaced by filepath listing index mapped to start at "N", with 0's defining additional minimium digits that are zero-filled. For example, `$(0)` is replaced with `0, 1, 2, ...` and `$(001)` is replaced with `001, 002, 003, ...`.
 
 Single quotes must be used around the command to prevent `$` being escaped by the shell. See also: --quiet
 

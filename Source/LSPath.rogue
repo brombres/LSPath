@@ -101,12 +101,13 @@ class LSPath
             if (not quiet) println "> " + cmd
             System.run( cmd )
           else
-            forEach (filepath in filepaths)
+            forEach (filepath at index in filepaths)
               local cmd = command_line
               cmd = replace( cmd, "$(filename)", File(filepath).filename, &=esc )
               cmd = replace( cmd, "$(folder)", File(filepath).folder, &=esc )
               cmd = replace( cmd, "$(name)", File(filepath).without_extension.filename, &=esc )
               cmd = replace( cmd, "$(ext)", File(filepath).extension, &=esc )
+              cmd = replace_indices( cmd, index )
               cmd = replace( cmd, "$", filepath, &=esc )
               if (not quiet) println "> " + cmd
               System.run( cmd )
@@ -120,6 +121,27 @@ class LSPath
     method replace( cmd:String, placeholder:String, filepath:String, &esc )->String
       if (esc) filepath = File( filepath ).esc
       return cmd.replacing( placeholder, filepath )
+
+    method replace_indices( cmd:String, index:Int )->String
+      local span = cmd.locate_pattern( "$($)($(I))" )   # e.g. "$(01)"
+      while (span)
+        local format = cmd.substring( span.value.unleft(2).unright(1) )
+        local digits = 0
+        forEach (ch in format)
+          if (ch == '0') ++digits
+          else           escapeForEach
+        endForEach
+
+        local offset = format->Int
+        if (offset > 0) ++digits
+
+        local replacement = (index + offset).format( "0$"(digits) )
+        cmd = cmd.before(span.value) + replacement + cmd.after(span.value)
+
+        span = cmd.locate_pattern( "$($)($(I))" )
+      endWhile
+
+      return cmd
 
     method add( filepath:String )
       if (not show_hidden and File(filepath).filename.begins_with('.')) return
@@ -180,6 +202,7 @@ class LSPath
                |           $(filename) - Filename only (without folder)
                |           $(name)     - Base filename only (without folder or extension)
                |           $(ext)      - Filename extension only (e.g. "txt")
+               |           $(0N)       - Replaced by listing index, e.g. "0" or "001".
                |    $$ - Command is invoked once and $$ is replaced by a space-separated list
                |         of every filepath.
                |
