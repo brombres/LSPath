@@ -4,7 +4,7 @@ Lists full filepaths matching a search pattern with optional command execution o
 About     | Current Release
 ----------|-----------------------
 Version   | 2.7
-Date      | May 5, 2025
+Date      | January 30, 2026
 Platforms | Windows, macOS, Linux
 
 # Installation
