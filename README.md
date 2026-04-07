@@ -27,7 +27,7 @@ Placeholder Marker | Description
 `$`                | Command is invoked N times for N result filepaths, with a different filepath substituted each time.
 `$$`               | Command is invoked once and `$$` is replaced by a space-separated list of every filepath.
 
-In addition, the following variants of `$` are supported:
+The following variants of `$` are supported:
 
 Placeholder Marker | Description
 -------------------|--------------------------------------------------------------
@@ -37,6 +37,16 @@ Placeholder Marker | Description
 `$(name)`          | Base filename only (without folder or extension)
 `$(ext)`           | Replaced by filename extension only (e.g. "txt")
 `$(0N)`            | Replaced by filepath listing index mapped to start at "N", with 0's defining additional minimium digits that are zero-filled. For example, `$(0)` is replaced with `0, 1, 2, ...` and `$(001)` is replaced with `001, 002, 003, ...`.
+
+The following variants of `$$` are supported:
+
+Placeholder Marker | Description
+-------------------|--------------------------------------------------------------
+`$$`               | Replaced by a space-separated list of every filepath.
+`$$(...)`          | Replaced by a space-separated list of every filepath variant using the same rules as `$(...)` above.
+`$$[N]`            | Replaced by the filepath at index N. 1 is the first. -1 is the last, -2 is the next-to-last, etc.
+`$$[N](...)`       | Replaced by the filepath at index N using the same variants as `$(...)` above (except for `$(0N)`).
+`$$[0]`            | Replaced with empty string, allowing a command to be created that runs once for 1+ files but does not list any specific files in the command.
 
 Single quotes must be used around the command to prevent `$` being escaped by the shell. See also: --quiet
 

@@ -95,9 +95,12 @@ class LSPath
           local quiet = command//options.contains( "quiet" )
           local command_line = command//options//command->String
           if (command_line.contains("$$"))
-            if (esc) filepaths = filepaths.map<<String>>( (f) => File(f).esc )
+            local cmd = String()
+            local remaining = command_line
+            while (remaining.contains("$$"))
+              remaining = replace_next_file_list_marker( remaining, filepaths, cmd, &=esc )
+            endWhile
 
-            local cmd = command_line.replacing("$$",filepaths.join(' '))
             if (not quiet) println "> " + cmd
             System.run( cmd )
           else
@@ -117,6 +120,45 @@ class LSPath
           println( forEach in filepaths )
         endIf
       endBlock
+
+    method replace_next_file_list_marker( remaining:String, filepaths:String[], cmd:String, &esc )->String
+      local index = remaining.locate( "$$" ).value
+      if (index) cmd.print( remaining.leftmost(index) )
+
+      remaining .= from( index + 2 )
+
+      if local n_string = remaining.extract_string( "[$(I)]*" )
+        remaining .= after_first( ']' )
+        if local n = n_string->Int
+          if (n > 0) --n
+          local filepath = filepaths[ n % filepaths.count ]
+          if local variant = remaining.extract_string( "($)*" )
+            remaining .= after_first( ')' )
+            which (variant)
+              case "filename": cmd.print( apply_esc(File(filepath).filename,&=esc) )
+              case "folder":   cmd.print( apply_esc(File(filepath).folder,&=esc) )
+              case "name":     cmd.print( apply_esc(File(filepath).without_extension.filename,&=esc) )
+              case "ext":      cmd.print( apply_esc(File(filepath).extension,&=esc) )
+              others:          cmd.print( apply_esc(filepath,&=esc) )
+            endWhich
+          else
+            if (esc) filepath = File( filepath ).esc
+            cmd.print( filepath )
+          endIf
+        else
+          # [0] - replace with empty string
+          noAction
+        endIf
+      else
+        if (esc) filepaths = filepaths.map<<String>>( (f) => File(f).esc )
+        cmd.print( filepaths.join(' ') )
+      endIf
+
+      return remaining
+
+    method apply_esc( filepath:String, &esc )->String
+      if (esc) return File( filepath ).esc
+      else     return filepath
 
     method replace( cmd:String, placeholder:String, filepath:String, &esc )->String
       if (esc) filepath = File( filepath ).esc
@@ -195,7 +237,7 @@ class LSPath
                |    can contain one of two kinds of placeholder marker:
                |
                |    $  - Command is invoked N times for N result filepaths, with a different
-               |         filepath substituted each time. The following variations of '$'
+               |         filepath substituted each time. The following variants of '$'
                |         are supported:
                |           $           - Full filepath (folder + filename)
                |           $(folder)   - Folder only
@@ -203,8 +245,17 @@ class LSPath
                |           $(name)     - Base filename only (without folder or extension)
                |           $(ext)      - Filename extension only (e.g. "txt")
                |           $(0N)       - Replaced by listing index, e.g. "0" or "001".
-               |    $$ - Command is invoked once and $$ is replaced by a space-separated list
-               |         of every filepath.
+               |    $$ - Command is invoked once. Variants of '$$' are replaced as follows:
+               |           $$          - Replaced by a space-separated list of every filepath.
+               |           $$(...)     - Replaced by a space-separated list of every filepath
+               |                         variant using the same rules as '$(...)' above.
+               |           $$[N]       - Replaced by the filepath at index N. 1 is the first.
+               |                         -1 is the last, -2 is the next-to-last, etc.
+               |           $$[N](...)  - Replaced by the filepath at index N using the same
+               |                         variants as '$(...)' above (except for '$(0N)').
+               |           '$$[0]'     - Replaced with empty string, allowing a command to be
+               |                         created that runs once for 1+ files but does not list
+               |                         any specific files in the command.
                |
                |    Single quotes must be used to prevent '$' being escaped by the shell.
                |    See also: --quiet
