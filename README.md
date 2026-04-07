@@ -59,6 +59,12 @@ Example (macOS/Linux)                       | Description
 Paths are displayed with spaces and most other symbols escaped. For example
 a filepath containing `abc 123` would display as `abc\ 123`.
 
+### `--exclude=<filename>` `-x <filename>`
+Exclude filenames matching the given pattern. `--exclude` overrides any matches
+made with `--name`. For example, `lspath -n .png -x .import` will include
+`XYZ.png` but will exclude `XYZ.png.import`. Multiple `--exclude` directives
+can be specified.
+
 ### `--grep=<pattern>` `-g <pattern>`
 Only prints filepaths of files that contain one or more given patterns.
 Despite the name these are "wildcard" patterns, not classic "grep" regular
@@ -83,25 +89,22 @@ Print this help text.
 ### `--hidden` `-a`
 Show all hidden files - hidden files are omitted by default.
 
+### `--limit` `-l`
+Limit `lspath` to operate non-recursively.
+
 ### `--name=<filename>` `-n <filename>`
 Only print filepaths containing the given name pattern. Name comparisions
 are case-insensitive. If multiple `--name` directives are given, each
 filepath need only match one of the names to be printed. Wildcard names
 patterns may be used, e.g. `"ABC*.cpp"`.
 
-### `--quiet, -q`
+### `--quiet` `-q`
 Prevents the `--command` option from displaying each command before executing it.
 Does not suppress the execution output. Useful when piping the result of `lspath`
 into another command.
 
-### `--limit, -l`
-Limit `lspath` to operate non-recursively.
-
-### `--exclude=<filename>` `-x <filename>`
-Exclude filenames matching the given pattern. `--exclude` overrides any matches
-made with `--name`. For example, `lspath -n .png -x .import` will include
-`XYZ.png` but will exclude `XYZ.png.import`. Multiple `--exclude` directives
-can be specified.
+### `--relative` `-r`
+Prints relative filepaths instead of absolute filepaths.
 
 ## Wildcard Patterns
 Put patterns in quotes to ensure that LSPath's nonstandard wildcard pattern
