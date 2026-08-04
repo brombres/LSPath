@@ -140,7 +140,7 @@ class LSPath
             endWhile
 
             if (not quiet) println "> " + cmd
-            System.run( cmd )
+            System.run( cmd, &with_aliases )
           else
             forEach (filepath at index in filepaths)
               local cmd = command_line
@@ -151,7 +151,7 @@ class LSPath
               cmd = replace_indices( cmd, index )
               cmd = replace( cmd, "$", filepath, &=esc )
               if (not quiet) println "> " + cmd
-              System.run( cmd )
+              System.run( cmd, &with_aliases )
             endForEach
           endIf
         elseIf (command//options//pipe)
