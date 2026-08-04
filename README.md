@@ -56,8 +56,10 @@ Example (macOS/Linux)                       | Description
 `lspath "**/*.rogue" -e -c 'wc -l $$'`      | Word count of all filepaths, escaping spaces.
 
 ### `--esc` `-e`
-Paths are displayed with spaces and most other symbols escaped. For example
-a filepath containing `abc 123` would display as `abc\ 123`.
+Paths containing spaces or other special characters are displayed quoted. For example
+a filepath containing `abc 123` would display as `'abc 123'`. Useful when copying and
+pasting results into other commands. For piping results into another command, use
+`--pipe` instead.
 
 ### `--exclude=<filename>` `-x <filename>`
 Exclude filenames matching the given pattern. `--exclude` overrides any matches
@@ -97,6 +99,15 @@ Only print filepaths containing the given name pattern. Name comparisions
 are case-insensitive. If multiple `--name` directives are given, each
 filepath need only match one of the names to be printed. Wildcard names
 patterns may be used, e.g. `"ABC*.cpp"`.
+
+### `--pipe` `-p`
+Each result filepath is printed with a terminating NUL character (ASCII 0) instead of
+a newline, which makes the output safe to pipe into commands that accept NUL-separated
+input - filepaths containing spaces, quotes, and other special characters are passed
+through intact. Filepaths are not escaped or quoted, so `--pipe` cannot be combined
+with `--esc`; it also cannot be combined with `--command`. Example:
+
+    lspath -n .rogue --pipe | xargs -0 wc -l
 
 ### `--quiet` `-q`
 Prevents the `--command` option from displaying each command before executing it.
