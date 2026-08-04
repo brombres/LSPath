@@ -4,8 +4,8 @@
 #===============================================================================
 $requireRogue "2.0"
 
-$define VERSION "2.11"
-$define DATE    "August 3, 2026"
+$define VERSION "2.11.1"
+$define DATE    "August 4, 2026"
 
 uses Console/CommandLineParser
 
